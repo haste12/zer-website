@@ -1,0 +1,16 @@
+node_modules/
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Uploads (stored on server, not in git)
+backend/uploads/
+
+*.log
+.DS_Store
+Thumbs.db

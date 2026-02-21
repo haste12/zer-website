@@ -1,0 +1,19 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#fdf8e8"/>
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="#d4a820" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="400" height="400" fill="url(#grid)" opacity="0.3"/>
+  <!-- Ring shape -->
+  <circle cx="200" cy="185" r="85" fill="none" stroke="#d4a820" stroke-width="26"/>
+  <circle cx="200" cy="185" r="85" fill="none" stroke="#f5e165" stroke-width="8"/>
+  <!-- Gem -->
+  <polygon points="200,98 235,133 200,165 165,133" fill="#b8860b"/>
+  <polygon points="200,98 235,133 200,122" fill="#f5e165"/>
+  <polygon points="200,98 165,133 200,122" fill="#d4a820"/>
+  <!-- Text -->
+  <text x="200" y="315" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#b8860b" font-weight="bold">زێر جووێلری</text>
+  <text x="200" y="342" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#c8a020">Zer Jewelry</text>
+</svg>
