@@ -57,6 +57,7 @@ async function fetchFromRudawIndex() {
 
         // USD rate — kurdistanPrices.usdRate is per 100 USD, convert to per 1 USD
         let usdRate = FALLBACK_USD_RATE;
+        let usdEntryBuy = null;
         if (kp.usdRate && kp.usdRate > 1000) {
             // usdRate > 1000 means it's per 100 USD (e.g. 152750 → 1527.5)
             usdRate = Math.round(kp.usdRate / 100);
@@ -64,14 +65,16 @@ async function fetchFromRudawIndex() {
             const usdEntry = currencies.find(c => c.id === 'us' || c.code === 'us' || c.name === 'دۆلار');
             if (usdEntry && usdEntry.buy > 1000) {
                 usdRate = Math.round(usdEntry.buy / 100);
+                usdEntryBuy = usdEntry.buy;
             } else if (usdEntry && usdEntry.buy > 0) {
                 usdRate = Math.round(usdEntry.buy);
+                usdEntryBuy = usdEntry.buy;
             }
         }
 
         console.log('✅ rudawindex.net prices:');
         console.log(`   18K: ${price18K.toLocaleString()} | 21K: ${price21K.toLocaleString()} | 22K: ${price22K.toLocaleString()} | 24K: ${price24K.toLocaleString()} IQD/mithqal`);
-        console.log(`   USD rate: ${usdRate} IQD = 1 USD (buy per 100: ${usdEntry?.buy?.toLocaleString() ?? 'N/A'})`);
+        console.log(`   USD rate: ${usdRate} IQD = 1 USD (buy per 100: ${usdEntryBuy?.toLocaleString() ?? 'N/A'})`);
 
         return { price18K, price21K, price22K, price24K, usdRate };
 
@@ -143,7 +146,14 @@ async function fetchFromFallback() {
 // ────────────────────────────────────────────────────────────────────────────
 // MAIN: Try rudawindex first, fallback to goldprice.org
 // ────────────────────────────────────────────────────────────────────────────
+let _isUpdating = false;
+
 async function updateGoldPricesFromAPI() {
+    if (_isUpdating) {
+        console.log('⏳ Update already in progress — skipping this tick.');
+        return null;
+    }
+    _isUpdating = true;
     console.log('\n🔄 Fetching live Kurdistan gold prices from rudawindex.net...');
 
     try {
@@ -186,6 +196,8 @@ async function updateGoldPricesFromAPI() {
     } catch (err) {
         console.error('❌ Auto-update error:', err.message, '\n');
         return null;
+    } finally {
+        _isUpdating = false;
     }
 }
 
