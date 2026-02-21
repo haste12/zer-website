@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
@@ -13,7 +13,7 @@ import { FiPackage } from 'react-icons/fi';
 
 const fetcher = (url: string) => api.get(url).then((r) => r.data);
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState(searchParams.get('search') || '');
@@ -138,5 +138,13 @@ export default function ProductsPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-cream-50" />}>
+      <ProductsContent />
+    </Suspense>
   );
 }
