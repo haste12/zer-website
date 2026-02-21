@@ -19,8 +19,8 @@ const Item = require('../models/Item');
 // ── Constants (used only for fallback calculation) ─────────────────────────
 const TROY_OZ_IN_GRAMS = 31.1035;
 const MITHQAL_IN_GRAMS = 5.0;    // Erbil/Iraq standard: 1 mithqal = 5 grams
-const ERBIL_FACTOR = parseFloat(process.env.GOLD_ERBIL_FACTOR || '1.182');
-const FALLBACK_USD_RATE = parseFloat(process.env.FALLBACK_USD_RATE || '1530');
+const ERBIL_FACTOR = parseFloat(process.env.GOLD_ERBIL_FACTOR || '1.013');
+const FALLBACK_USD_RATE = parseFloat(process.env.FALLBACK_USD_RATE || '1527');
 
 const http = axios.create({ timeout: 12000 });
 
@@ -55,12 +55,18 @@ async function fetchFromRudawIndex() {
         // Derive 24K from 21K ratio (standard karat math)
         const price24K = Math.round(price21K * 24 / 21);
 
-        // USD rate — rudawindex gives rate per 100 USD, convert to per 1 USD
+        // USD rate — kurdistanPrices.usdRate is per 100 USD, convert to per 1 USD
         let usdRate = FALLBACK_USD_RATE;
-        const usdEntry = currencies.find(c => c.id === 'us' || c.code === 'us' || c.name === 'دۆلار');
-        if (usdEntry && usdEntry.buy > 0) {
-            // buy price is per 100 USD → divide by 100 to get per 1 USD
-            usdRate = Math.round(usdEntry.buy / 100);
+        if (kp.usdRate && kp.usdRate > 1000) {
+            // usdRate > 1000 means it's per 100 USD (e.g. 152750 → 1527.5)
+            usdRate = Math.round(kp.usdRate / 100);
+        } else {
+            const usdEntry = currencies.find(c => c.id === 'us' || c.code === 'us' || c.name === 'دۆلار');
+            if (usdEntry && usdEntry.buy > 1000) {
+                usdRate = Math.round(usdEntry.buy / 100);
+            } else if (usdEntry && usdEntry.buy > 0) {
+                usdRate = Math.round(usdEntry.buy);
+            }
         }
 
         console.log('✅ rudawindex.net prices:');
